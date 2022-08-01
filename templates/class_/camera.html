@@ -1,0 +1,104 @@
+<!-- 
+<html>
+  <head>
+    <title>Video Live Stream</title>
+  </head>
+  <body>
+    <h1>Video Live Stream</h1>
+    <img src="{% url 'video_feed' value=index%}">
+  </body>
+</html> -->
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LMS System</title>
+    <link rel="stylesheet" href="/static/css/uikit.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<style>
+  img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>
+<body>
+<nav class="uk-navbar-container" uk-navbar uk-sticky>
+    <div class="uk-navbar-left">
+        <div class="uk-container">
+            <h3>Welcome, {{request.user}}</h3>
+        </div>
+    </div>
+
+    <div class="uk-navbar-right">
+       <div class="uk-container">
+            <ul class="uk-navbar-nav">
+                <li>
+                    <button class="uk-button uk-button-primary dashbutton"><a href="/teacher/dashboard/" style="color:white;">Dashboard<span uk-icon="icon: triangle-down"></span></a></button>
+
+                    <div class="uk-navbar-dropdown">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            <li><a href="#teacher-modal " uk-toggle>Setting</a></li>
+                            <hr>
+                            <li><a href="/logout/">Logout</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+       </div>
+
+    </div>
+</nav>
+
+           
+    
+                    <ul class="uk-navbar-nav uk-flex-center">
+                        <li class="uk-active"><a href={{assignments}}>Discussions & Assignments</a></li>
+                        <li class="uk-active"><a href={{streams}}>Stream</a></li>
+                        <li class="uk-active"><a href={{students}}>Students</a></li>
+                    </ul>
+                <hr class="uk-divider-icon">
+   
+    <div class="uk-container">
+      <img src="{% url 'video_feed' value=index%}" class="center">
+    </div>
+
+    <h3> Recorded class videos of {{class_name}} by {{teacher_name}}</h3> 
+    <div class="uk-overflow-auto">
+      <table class="uk-table uk-table-striped">
+        <thead>
+            <tr>
+                <th><br>Sr No.</th>
+                <th><br>Video</th>
+                <th><br>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            {%for output in recordings%}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td><video width="640" height="480" controls> <source src="/media/recordings/{{output.video}}" type="video/mp4"></td>
+               
+                <td> {{output.timestamp}} </td>
+
+            </tr>
+
+            {%endfor%}
+           
+        </tbody>
+    </table>    
+
+    </div>
+ 
+<script src="/static/js/uikit.min.js"></script>
+<script src="/static/js/uikit-icons.min.js"></script>
+<script src="/static/js/js.js"></script>
+</body>
+</html>
+

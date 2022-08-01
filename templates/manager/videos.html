@@ -1,0 +1,87 @@
+{% extends 'master/dashboard.html' %}
+
+ {% block 'contents' %}
+     <div uk-grid>
+        {% include 'includes/dashboard_sidenav.html' %}
+        
+
+          <div class="uk-width-3-4@m content">
+          <h3> Recorded videos of all classes </h3>
+             
+          <div class="uk-overflow-auto">
+            <table class="uk-table uk-table-striped">
+              <thead>
+                  <tr>
+                      <th><br>Sr No.</th>
+                      <th><br>Class</th>
+                      <th><br>Teacher</th>
+                      <th><br>Video</th>
+
+                      <th><br>Timestamp</th>
+                      <th><br>Actions</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  
+                  {%for output in recordings%}
+                  <tr>
+                      <td>{{forloop.counter}}</td>
+                      {% if output.class_room is not None%}
+                      <td><a href = "/class/details/{{output.class_room.code}}">{{output.class_room.name}}</a></td>
+                      <td>{{output.class_room.teacher.name}}</td>
+                      {%else%}
+                      <td> Out of schedule </td>
+                      <td> Unknown </td>
+                      {%endif%}
+                      <td><video width="320" height="240" controls> <source src="/media/recordings/{{output.video}}" type="video/mp4"></td>
+                     
+                      <td> {{output.timestamp}} </td>
+                      {% csrf_token %}
+                      <td> <button class="uk-button uk-button-danger uk-button-small uk-text-small" onclick = "deleteVideo('{{output.video}}')">Delete</button></td>
+      
+                  </tr>
+      
+                  {%endfor%}
+                 
+              </tbody>
+          </table>    
+        </div>
+            
+
+          
+
+        </div>
+   </div>
+   <script>
+
+    
+    async function postData(url_address, data_to_be_posted){
+      const response = await fetch(url_address, {method:"POST", body:data_to_be_posted});
+      return response.json();
+  }
+  
+
+  function deleteVideo(video_name){
+    if (confirm("Do you want to delete "+video_name)){    
+
+    let formData = new FormData();
+    formData.append('video_name', video_name);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}'); 
+   
+    
+  
+     
+    postData("delete", formData)
+        .then(data => {
+          
+          alert(data.message);
+          if (data.status){
+            window.location.reload();
+          }
+        });
+    }//end confirm
+    
+  }//end function
+    
+   </script>
+ {% endblock %}

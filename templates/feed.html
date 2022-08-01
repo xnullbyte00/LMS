@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" class="h-100">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+        <meta name="generator" content="Hugo 0.84.0">
+        <title>Intruder Security System</title>
+        <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/cover/">
+        <!-- Bootstrap core CSS -->
+        <link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <!-- Favicons -->
+        <link rel="icon" href="/static/admin/img/IntruderApp/icon.png" type="image/gif" sizes="16x16">
+        <style>
+            .bd-placeholder-img {
+                font-size: 1.125rem;
+                text-anchor: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                user-select: none;
+            }
+
+            @media (min-width: 768px) {
+                .bd-placeholder-img-lg {
+                    font-size: 3.5rem;
+                }
+            }
+        </style>
+        <!-- Custom styles for this template -->
+        <link href="/static/admin/css/cover.css" rel="stylesheet">
+    </head>
+    <body class="d-flex h-100 text-center text-white bg-dark">
+        <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+            <header class="mb-auto">
+                <div>
+                    <h3 class="float-md-start mb-0">Person Registration</h3>
+                    <nav class="nav nav-masthead justify-content-center float-md-end">
+                        <a class="nav-link active" href="/">Home</a>
+                        <a class="nav-link" href="/logout">Log out</a>
+                    </nav>
+                </div>
+            </header>
+            <main class="px-3">
+
+                <label for="personalInfo">
+                    <b>Personal Information</b>
+                </label>
+                
+
+                <div class="row g-2">
+                    <div class="col g-md-4">
+                        <br>
+                        <img id="photo" src="/static/admin/img/IntruderApp/face.png" alt="your image" />
+                        <br>
+                        <br>
+                    </div>
+                    
+                </div>
+
+                <div>
+                    <input type='file' id = "person_photo" alt="your image" onchange="readURL(this);" multiple/>
+                    <br> <br>
+                </div>
+
+                <div class="row g-3">
+                   
+                    
+                    
+                    <div class="col">
+                        <input type="text" class="form-control" id = "name" placeholder="Owner Name" aria-label="Owner Name" style="font-size:13px;">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" id = "cnic" placeholder="CNIC" aria-label="CNIC" style="font-size:13px;">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" id = "contact" placeholder="Contact" aria-label="Contact" style="font-size:13px;">
+                    </div>
+
+                   
+                </div>
+                <br>
+                
+                <div>
+                    <a class="btn btn-lg btn-secondary" style="font-size:15px;" onclick="uploadItems()">Upload</a>
+                </div>
+            </main>
+            <footer class="mt-auto text-white-50">
+                <!-- <p>Visit our website <a href="{{company_website}}">{{company_name}}</a></p> -->
+                <br>
+                <p> Intruder System 2022 </p>
+            </footer>
+        </div>
+        <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script> src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.0/async.min.js"</script>
+        <script>
+            async function postData(url_address, data_to_be_posted) {
+                const response = await fetch(url_address, {
+                    method: "POST",
+                    body: data_to_be_posted
+                });
+                return response.json();
+            }
+
+            function uploadItems() {
+                var name= document.getElementById("name");
+                var cnic= document.getElementById("cnic");
+                var contact= document.getElementById("contact");
+                var photo= document.getElementById("person_photo");
+
+                
+                
+                let formData = new FormData();
+               
+                formData.append('name', name.value);
+                formData.append('cnic', cnic.value);
+                formData.append('contact', contact.value);
+
+                
+
+                for (i = 0; i < photo.files.length; i++){
+                    formData.append('photo', photo.files[i]);
+                }
+
+                //formData.append('photo'+String(i+1), photo.files[i]);
+               
+               
+                var url_address = "/register"
+                alert("Data has been processed. Please wait")
+                postData(url_address, formData).then(data => {
+                   alert(data.message);
+                  location.reload();
+                });
+                alert("Uploaded")
+                
+            }
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+            
+                    reader.onload = function (e) {
+                        $('#photo')
+                            .attr('src', e.target.result)
+                            .width(150)
+                            .height(200);
+                    };
+            
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            
+
+        </script>
+    </body>
+</html>

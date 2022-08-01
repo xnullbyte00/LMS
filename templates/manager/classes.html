@@ -1,0 +1,178 @@
+{% extends 'master/dashboard.html' %}
+{% load static %}
+
+{% block 'contents' %}
+<div uk-grid>
+  {% include 'includes/dashboard_sidenav.html' %}
+      
+  <div class="uk-width-3-6@m content">
+      <div class="uk-overflow-auto">
+          <h3> Details of all classes </h3>
+          <table class="uk-table uk-table-striped">
+            <thead>
+                <tr>
+                    <th><b>Sr No.</th>
+                    <th><b>Class</th>
+                    <th><b>Teacher</th>
+                    <th><b>Enrolled students</th>
+                    <th><b>Room</th>
+                    <th><b>Subject</th>
+                    <th><b>Timing</th>
+                    <th><b>Day</th>
+                    <th><b>Actions</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                  
+                  {%for info in class_details%}
+                  <tr>
+                      <td>{{forloop.counter}}</td>
+                      
+                      <td><a href = "/class/details/{{info.code}}">{{info.name}}</a></td>
+                      <td><img class="uk-border-circle" width="30" height="30" src="/media/{{info.teacher__profile}}">{{info.teacher__name}}</td>
+                      <td> {{info.total}} </td>
+                      <td> {{info.room__name}} </td>
+                      <td> {{info.department}} </td>
+                      <td> {{info.timing__start_time}} </td>
+                      <td> {{info.day}} </td>
+                      {% csrf_token %}
+                      <td> <button class="uk-button uk-button-danger uk-button-small uk-text-small" onclick = "deleteClass('{{info.code}}')">Delete</button></td>
+                     
+      
+                  </tr>
+      
+                  {%endfor%}
+                 
+            </tbody>
+          </table>    
+      </div>
+
+      <h3> Teachers & Students Attendance Report</h3>
+
+        <div class="uk-overflow-auto">
+          
+          <table class="uk-table uk-table-striped">
+            <thead>
+                <tr>
+                    <th><b>Sr No.</th>
+                      <th><b>Class</th>
+                    <th><b>Teacher Name</th>
+                    {% comment %} <th><b>Attended</th> {% endcomment %}
+                    <th><b>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+
+              {%for output in teacher_attendance%}
+              <tr>
+                  <td>{{forloop.counter}}</td>
+                  <td><a href = "/class/details/{{output.class_room.code}}">{{output.class_room.name}}</a></td>
+                  {%if output.teacher.profile.url != "" %}
+                    <td><img class="uk-border-circle" width="30" height="30" src="{{MEDIA_URL}}{{output.class_room.teacher.profile.url}}"> {{output.class_room.teacher.name}}</td>
+                  {%else%}
+                    <td> <img class="uk-border-circle" width="30" height="30" src="{% static 'img/teacher.png' %}">{{output.class_room.teacher.name}}</td>
+                  {%endif%}
+
+                  {% comment %} {%if output.is_present %}
+                        <td><span uk-icon="icon: check; ratio: 2"></span></td>
+                  {%else%}
+                        <td><span uk-icon="icon: close; ratio: 2"></span></td>
+                  {%endif%} {% endcomment %}
+
+                  <td> {{output.timestamp}} </td>
+                  
+                  <td>{{k}} </td>
+                  <td>{{l}} </td>
+                
+              </tr>
+
+              {%endfor%}
+
+            </tbody>
+        </div>
+
+        <div class="uk-overflow-auto">
+          <table class="uk-table uk-table-striped">
+            <thead>
+                <tr>
+                    <th><b>Sr No.</th>
+                    <th><b>Class Name</th>
+                    <th><b>Student Name</th>
+                    <th><b>Class Attended</th>
+                    <th><b>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {%for output in student_attendance%}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td><a href = "/class/details/{{output.class_room.code}}">{{output.class_room.name}}</a></td>
+                    {%if output.student.profile.url != "" %}
+                      <td><img class="uk-border-circle" width="30" height="30" src="{{MEDIA_URL}}{{output.student.profile.url}}"> {{output.student.name}}</td>
+                    {%else%}
+                      <td> <img class="uk-border-circle" width="30" height="30" src="{% static 'img/teacher.png' %}">{{output.student.name}}</td>
+                    {%endif%}
+
+                    {%if output.is_present %}
+                          <td><span uk-icon="icon: check; ratio: 2"></span></td>
+                    {%else%}
+                          <td><span uk-icon="icon: close; ratio: 2"></span></td>
+                    {%endif%}
+
+                    <td> {{output.timestamp}} </td>
+                    
+                    <td>{{k}} </td>
+                    <td>{{l}} </td>
+                  
+                </tr>
+
+                {%endfor%}
+               
+            </tbody>
+        </table>    
+
+        </div>
+
+  </div>
+      
+
+</div>
+
+
+
+   <script>
+
+    
+    async function postData(url_address, data_to_be_posted){
+      const response = await fetch(url_address, {method:"POST", body:data_to_be_posted});
+      return response.json();
+  }
+  
+
+  function deleteClass(class_code){
+    if (confirm("Do you want to delete this class?")){    
+
+    let formData = new FormData();
+    formData.append('code', class_code);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}'); 
+   
+    
+  
+     
+    postData("classes/delete", formData)
+        .then(data => {
+          
+          alert(data.message);
+          if (data.status){
+            window.location.reload();
+          }
+        });
+    }//end confirm
+    
+  }//end function
+    
+   </script>
+
+ {% endblock %}

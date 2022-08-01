@@ -1,0 +1,3 @@
+COLLEGE_NAME = 'Demo University of Balochistan'
+MAX_CLASS_DURATION = 180
+MAX_UNIVERSITY_TIME = 600

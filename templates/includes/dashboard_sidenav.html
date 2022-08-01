@@ -1,0 +1,36 @@
+<div class="uk-width-1-4@m sidenav">
+            <ul class="menu-item">
+                <li>
+                    <a href="/manager/dashboard">Dashboard <span uk-icon="icon: thumbnails"></span></a>
+                </li>
+
+                <!-- <li>
+                    <a href="#">Classes <span uk-icon="icon: comments"></span></a>
+                </li> -->
+                  <li>
+                    <a href="/manager/videos">Videos <span uk-icon="icon: video-camera"></span></a>
+                </li>
+
+                <li>
+                    <a href="/manager/classes">Classes <span uk-icon="icon: grid"></span></a>
+                </li>
+
+                <li>
+                    <a href="{% url 'manage_student' %}">Students<span uk-icon="icon: users"></span></a>
+                </li>
+                <li>
+                    <a href="{% url 'manage_teacher' %}">Teachers<span uk-icon="icon: user"></span></a>
+                </li>
+                <li>
+                    <a href="/admin">Admistration <span uk-icon="icon: laptop"></span></a>
+                </li>
+                <hr class="uk-divider-icon">
+                <!-- <li>
+                    <a href="#">Setting <span uk-icon="icon: cog"></span></a>
+                </li> -->
+                <li>
+                    <a href="{% url 'logout' %}">Logout<span uk-icon="icon: lock"></span></a>
+                </li>
+
+            </ul>
+        </div>

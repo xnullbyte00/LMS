@@ -1,0 +1,191 @@
+{% extends 'master/dashboard.html' %}
+
+ {% block 'contents' %}
+     <div uk-grid>
+        {% include 'includes/dashboard_sidenav.html' %}
+        {{manage_name}}
+        <div class="uk-width-3-4@m content">
+            <h3>Welcome {{manager_name}}!</h3>
+             {% include 'includes/message.html' %}
+            <div class="uk-card uk-card-default">
+               <p>
+                   <b> You are at the Admin's Dashboard of {{college_name}} </b>
+               </p>
+            </div>
+              <div class="uk-card uk-card-default">
+               <p>
+                   <b> 1. Dashboard </b> is for modifying the configurations related to class management. 
+               </p>
+               <p>
+                <b> 2. Videos </b> is for viewig and manipulating video data that is recorded in the classrooms. 
+            </p>
+            <p>
+                <b> 3. Students </b> is for adding new students, deleting and suspending existing students in the institute. 
+            </p>
+            <p>
+                <b> 4. Teachers </b> is for adding new teachers, deleting and suspending existing teachers in the institute. 
+            </p>
+
+            <p>
+                <b> 5. Admistration </b> is for accessing main database of LMS system. 
+            </p>
+           
+            </div>
+            {%csrf_token%}
+            <div class="uk-column-1-3 uk-column-divider">
+                
+                <div class="uk-margin">
+                    <h6> <b>Class Time Duration (In minutes)</h6>
+                    <input class="uk-input uk-form-primary uk-form-width-small" id = "class_duration" type="text" placeholder="Enter duration in minutes" value="{{config.class_duration}}">
+                    <button class="uk-button uk-button-primary uk-button-small" onclick = "changeClassDuration()">Change</button>
+                </div>
+
+                <div class="uk-margin">
+                    <h6><b>Attendance Time (In minutes)</h6>
+                    <input class="uk-input uk-form-primary uk-form-width-small" id = "attendance_duration" type="text" placeholder="Enter duration in minutes" value="{{config.attendance_duration}}">
+                    <button class="uk-button uk-button-primary uk-button-small"  onclick = "changeAttendanceDuration()">Change </button>
+                </div>
+
+                <div class="uk-margin">
+                    <h6><b>Uploading Time (In minutes)</h6>
+                    <input class="uk-input uk-form-primary uk-form-width-small" type="text" id = "uploading_time" placeholder="Enter duration in minutes" value="{{config.uploading_time}}">
+                    <button class="uk-button uk-button-primary uk-button-small"  onclick = "changeUploadingTime()">Change</button>
+                </div>
+
+                
+
+            </div>
+
+            <div class="uk-column-1-3 uk-column-divider">
+                {%for timing in schedule%}
+                <div class="uk-margin">
+                    <h6> <b>Schedule No: {{forloop.counter}}</h6>
+                    <input class="uk-input uk-form-primary uk-form-width-small"  type="time"  id = "timing{{forloop.counter}}" value="{{timing}}" >
+                    <button class="uk-button uk-button-primary uk-button-small" onclick = "changeSchedule('{{forloop.counter}}')">Change</button>
+                </div>
+                {%endfor%}
+
+                
+            </div>
+
+            <div  class="uk-column-1-2 uk-column-divider">
+
+                <div class="uk-margin">
+                    <h6> <b>Face Detection Bounding Box Length (In pixels)</h6>
+                    <input class="uk-input uk-form-primary uk-form-width-small" id = "threshold_pixels" type="text" placeholder="Enter length in pixels" value="{{config.threshold_pixels}}">
+                    <button class="uk-button uk-button-primary uk-button-small" onclick = "changePixelsThreshold()">Change</button>
+                </div>
+                
+                <div>
+                <h6> <b> Video Downloading from Cloud</h6>
+                    {%if config.uploading_allowed%}
+                        <button class="uk-button uk-button-primary uk-button-primary" onclick = "changeUploadingPermission()">
+                            Turn on </button>
+                    {%else%}
+                    <button class="uk-button uk-button-primary uk-button-danger" onclick = "changeUploadingPermission()">
+                        Turn off</button>
+
+                    {%endif%}
+                </div>
+
+            </div>
+
+                
+
+                
+
+            </div>
+
+    
+        </div>
+
+        
+   </div>
+   <script>
+    async function postData(url_address, data_to_be_posted){
+        const response = await fetch(url_address, {method:"POST", body:data_to_be_posted});
+        return response.json();
+    }
+
+       function changeClassDuration(){
+        
+        let formData = new FormData();
+        formData.append('value', document.getElementById("class_duration").value);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}'); 
+        postData("configuration/modify/class", formData)
+            .then(data => {
+              alert(data.message);
+              if (data.status){
+                window.location.reload();
+              }
+            });
+       }
+
+       function changePixelsThreshold(){
+        let formData = new FormData();
+        formData.append('value', document.getElementById("threshold_pixels").value);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}'); 
+        postData("configuration/modify/pixels", formData)
+            .then(data => {
+              alert(data.message);
+              if (data.status){
+                window.location.reload();
+              }
+            });
+       }
+       function changeAttendanceDuration(){
+
+        let formData = new FormData();
+        formData.append('value', document.getElementById("attendance_duration").value);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}'); 
+        postData("configuration/modify/attendance", formData)
+            .then(data => {
+              alert(data.message);
+              if (data.status){
+                window.location.reload();
+              }
+            });
+
+       }
+
+       function changeUploadingTime(){
+        let formData = new FormData();
+        formData.append('value', document.getElementById("uploading_time").value);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}'); 
+        postData("configuration/modify/uploading", formData)
+            .then(data => {
+              alert(data.message);
+              if (data.status){
+                window.location.reload();
+              }
+            });
+       }
+
+       function changeUploadingPermission(){
+        let formData = new FormData();
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}'); 
+        postData("configuration/modify/allowed", formData)
+            .then(data => {
+              alert(data.message);
+              if (data.status){
+                window.location.reload();
+              }
+            });
+       }
+
+       function changeSchedule(no_of_schedule){
+
+            let formData = new FormData();
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}'); 
+            formData.append('timing', document.getElementById("timing"+no_of_schedule).value);
+            postData("schedule/modify/"+no_of_schedule, formData)
+                .then(data => {
+                alert(data.message);
+                if (data.status){
+                    window.location.reload();
+                }
+                });
+       }
+   </script>
+
+ {% endblock %}
